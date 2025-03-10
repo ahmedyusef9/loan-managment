@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   ResponsiveContainer,
@@ -67,16 +67,16 @@ function Label(props) {
 }
 
 function UiSelect(props) {
-  const { value, onChange } = props;
+  const { value, onChange, onValueChange } = props;
   return (
     <div className="mb-4">
       {props.children}
-      {/* Fix for the onValueChange warning by implementing direct setValue */}
       <select 
         className="input-field"
         value={value} 
         onChange={(e) => {
           if (onChange) onChange(e.target.value);
+          if (onValueChange) onValueChange(e.target.value);
         }}
         style={{display: 'none'}}
       >
@@ -181,6 +181,29 @@ export default function LoanManagementApp() {
   const [loans, setLoans] = useState([]);
   const [lang, setLang] = useState('en');
   const [loanName, setLoanName] = useState('');
+  
+  // Detect user's country and set appropriate language
+  useEffect(() => {
+    async function detectCountry() {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        const country = data.country_code;
+        
+        // Set language based on country
+        if (country === 'IL') {
+          setLang('he');
+        } else if (['AE', 'SA', 'EG', 'IQ', 'JO', 'KW', 'LB', 'OM', 'QA', 'SY'].includes(country)) {
+          setLang('ar');
+        }
+        // Default is already 'en'
+      } catch (error) {
+        console.log("Could not detect country, using default language");
+      }
+    }
+    
+    detectCountry();
+  }, []);
   const [loanAmount, setLoanAmount] = useState(0);
   const [fixedInterest, setFixedInterest] = useState(0);
   const [primeRate, setPrimeRate] = useState(0);
