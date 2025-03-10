@@ -1,9 +1,10 @@
+
 {
   "name": "loan-management-tailwind",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
+    "start": "WATCHPACK_POLLING=true react-scripts start",
     "build": "react-scripts build"
   },
   "dependencies": {
