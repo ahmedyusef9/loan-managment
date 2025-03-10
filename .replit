@@ -6,3 +6,14 @@ channel = "stable-24_05"
 [[ports]]
 localPort = 3000
 externalPort = 80
+
+[workflows]
+runButton = "Start App"
+
+[[workflows.workflow]]
+name = "Start App"
+author = 38884992
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
