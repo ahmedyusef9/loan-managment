@@ -389,13 +389,13 @@ export default function LoanManagementApp() {
             </Label>
             <select
               id="languageSelect"
-              className="bg-transparent border border-white border-opacity-30 rounded p-1 text-white focus:outline-none"
+              className="bg-white bg-opacity-20 border border-white border-opacity-40 rounded p-1 text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
               value={lang}
               onChange={(e) => setLang(e.target.value)}
             >
-              <option value="en">English</option>
-              <option value="he">עברית</option>
-              <option value="ar">العربية</option>
+              <option value="en" className="text-gray-800 bg-white">English</option>
+              <option value="he" className="text-gray-800 bg-white">עברית</option>
+              <option value="ar" className="text-gray-800 bg-white">العربية</option>
             </select>
           </div>
         </div>
@@ -492,17 +492,10 @@ export default function LoanManagementApp() {
               </div>
 
               <Label>{t('amortMethodLabel')}</Label>
-              <UiSelect 
-                value={amortizationMethod} 
-                onChange={setAmortizationMethod}
-              >
-                <SelectTrigger onClick={() => document.getElementById('amortSelect').click()}>
-                  <SelectValue placeholder={amortizationMethod} />
-                </SelectTrigger>
-                
+              <div className="relative">
                 <select
                   id="amortSelect"
-                  className="hidden"
+                  className="input-field appearance-none pr-10"
                   value={amortizationMethod}
                   onChange={(e) => setAmortizationMethod(e.target.value)}
                 >
@@ -510,19 +503,12 @@ export default function LoanManagementApp() {
                   <option value="EqualPrincipal">Equal Principal</option>
                   <option value="Balloon">Balloon</option>
                 </select>
-                
-                <SelectContent>
-                  <SelectItem onClick={() => setAmortizationMethod("Spitzer")}>
-                    Spitzer
-                  </SelectItem>
-                  <SelectItem onClick={() => setAmortizationMethod("EqualPrincipal")}>
-                    Equal Principal
-                  </SelectItem>
-                  <SelectItem onClick={() => setAmortizationMethod("Balloon")}>
-                    Balloon
-                  </SelectItem>
-                </SelectContent>
-              </UiSelect>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
 
               <Button 
                 variant="primary" 
