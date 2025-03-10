@@ -39,18 +39,6 @@ function SelectTrigger(props) {
     </div>
   </div>;
 }
-</old_str>
-<new_str>
-function SelectTrigger(props) {
-  return <div style={{ padding: '0.4rem 0.6rem', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '0.5rem', cursor: 'pointer', position: 'relative' }} {...props}>
-    {props.children}
-    <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '10px', pointerEvents: 'none' }}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-      </svg>
-    </div>
-  </div>;
-}
 function SelectValue(props) {
   return <span {...props}>{props.children}</span>;
 }
@@ -446,14 +434,14 @@ export default function LoanManagementApp() {
             onChange={(e) => setStartDate(e.target.value)}
           />
           <Label>{t('amortMethodLabel')}</Label>
-          <UiSelect onValueChange={(val) => setAmortizationMethod(val)} value={amortizationMethod}>
-            <SelectTrigger className="mb-2">
-              <SelectValue placeholder="Select an option" />
+          <UiSelect>
+            <SelectTrigger className="mb-2" onClick={() => document.getElementById('amortMethodDropdown').style.display = document.getElementById('amortMethodDropdown').style.display === 'none' ? 'block' : 'none'}>
+              <SelectValue>{amortizationMethod}</SelectValue>
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Spitzer">Spitzer</SelectItem>
-              <SelectItem value="EqualPrincipal">Equal Principal</SelectItem>
-              <SelectItem value="Balloon">Balloon</SelectItem>
+            <SelectContent id="amortMethodDropdown" style={{display: 'none'}}>
+              <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Spitzer</SelectItem>
+              <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Equal Principal</SelectItem>
+              <SelectItem onClick={() => {setAmortizationMethod('Balloon'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Balloon</SelectItem>
             </SelectContent>
           </UiSelect>
           <Button className="w-full" onClick={handleSubmit}>
