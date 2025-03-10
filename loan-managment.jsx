@@ -9,14 +9,27 @@ function CardContent(props) {
   return <div {...props}>{props.children}</div>;
 }
 function Button(props) {
-  const isActionButton = props.children === t('addLoan') || props.children === t('showSchedule') || props.children === t('hideSchedule');
+  // Check if button contains action text regardless of language
+  const isActionButton = ['addLoan', 'showSchedule', 'hideSchedule'].some(key => {
+    try {
+      // Try to match with any language translation
+      return Object.values(translations).some(langObj => 
+        langObj[key] === props.children
+      );
+    } catch (e) {
+      return false;
+    }
+  });
+  
   return <button style={{ 
     padding: '0.5rem 1rem', 
     margin: '0.2rem', 
     border: '1px solid #ccc', 
     borderRadius: '4px',
     backgroundColor: isActionButton ? '#3B82F6' : '',
-    color: isActionButton ? 'white' : ''
+    color: isActionButton ? 'white' : '',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s'
   }} {...props}>{props.children}</button>;
 }
 function Input(props) {
@@ -30,9 +43,27 @@ function UiSelect(props) {
   return <div {...props}>{props.children}</div>;
 }
 function SelectTrigger(props) {
-  return <div style={{ padding: '0.4rem 0.6rem', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '0.5rem', cursor: 'pointer', position: 'relative' }} {...props}>
+  const isRtl = isRTL(lang);
+  return <div style={{ 
+    padding: '0.4rem 0.6rem', 
+    border: '1px solid #ccc', 
+    borderRadius: '4px', 
+    marginBottom: '0.5rem', 
+    cursor: 'pointer', 
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: isRtl ? 'flex-end' : 'space-between'
+  }} {...props}>
     {props.children}
-    <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '10px', pointerEvents: 'none' }}>
+    <div style={{ 
+      position: 'absolute', 
+      top: '50%', 
+      transform: 'translateY(-50%)', 
+      [isRtl ? 'left' : 'right']: '10px', 
+      pointerEvents: 'none',
+      zIndex: 1
+    }}>
       <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
       </svg>
@@ -43,7 +74,18 @@ function SelectValue(props) {
   return <span {...props}>{props.children}</span>;
 }
 function SelectContent(props) {
-  return <div style={{ border: '1px solid #ccc', padding: '0.25rem', marginBottom: '0.5rem' }} {...props}>{props.children}</div>;
+  return <div style={{ 
+    border: '1px solid #ccc', 
+    padding: '0.25rem', 
+    marginBottom: '0.5rem',
+    position: 'absolute',
+    width: '100%',
+    zIndex: 10,
+    backgroundColor: 'white',
+    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+    borderRadius: '4px',
+    marginTop: '2px'
+  }} {...props}>{props.children}</div>;
 }
 function SelectItem(props) {
   return <div style={{ padding: '0.25rem 0', cursor: 'pointer' }} {...props}>{props.children}</div>;
@@ -353,12 +395,15 @@ export default function LoanManagementApp() {
     return `${year}-${month}-${day}`;
   }
   function t(key) {
-    if (!translations[lang] || translations[lang][key] === undefined) {
-      console.warn(`Missing translation for key '${key}' in language '${lang}'`);
-      // Return the key as fallback if translation is missing
+    try {
+      if (!translations[lang]) {
+        return translations.en[key] || key;
+      }
+      return translations[lang][key] !== undefined ? translations[lang][key] : (translations.en[key] || key);
+    } catch (e) {
+      console.warn(`Error in translation for key '${key}' in language '${lang}'`, e);
       return key;
     }
-    return translations[lang][key];
   }
   const direction = isRTL(lang) ? 'rtl' : 'ltr';
   return (
