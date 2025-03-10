@@ -390,10 +390,10 @@ export default function LoanManagementApp() {
   }
 
   function t(key) {
-    if (!translations[lang]) {
+    if (!translations[lang] || !translations[lang][key]) {
       return translations['en'][key] || key;
     }
-    return translations[lang][key] || key;
+    return translations[lang][key];
   }
   const direction = isRTL(lang) ? 'rtl' : 'ltr';
 
