@@ -353,6 +353,11 @@ export default function LoanManagementApp() {
     return `${year}-${month}-${day}`;
   }
   function t(key) {
+    if (!translations[lang] || translations[lang][key] === undefined) {
+      console.warn(`Missing translation for key '${key}' in language '${lang}'`);
+      // Return the key as fallback if translation is missing
+      return key;
+    }
     return translations[lang][key];
   }
   const direction = isRTL(lang) ? 'rtl' : 'ltr';
