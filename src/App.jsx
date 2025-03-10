@@ -8,72 +8,121 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend
+  Legend,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts';
 
-// Minimal stubs replaced with Tailwind utility classes
+// Improved UI components with better Tailwind styling
 function Card(props) {
   return (
-    <div className="border border-gray-300 rounded-xl mb-4 p-4" {...props}>
+    <div 
+      className={`bg-white rounded-xl shadow-md mb-4 p-6 overflow-hidden loan-card ${props.className || ''}`} 
+      {...props}
+    >
       {props.children}
     </div>
   );
 }
+
 function CardContent(props) {
-  return <div {...props}>{props.children}</div>;
+  return <div className="space-y-3" {...props}>{props.children}</div>;
 }
+
 function Button(props) {
-  // We can pass 'className' via props.className
+  const baseStyle = props.variant === 'primary' 
+    ? 'btn-primary' 
+    : props.variant === 'danger' 
+      ? 'btn-danger' 
+      : 'btn-secondary';
+      
   return (
     <button
-      className={`px-4 py-2 m-1 border border-gray-300 rounded-md hover:bg-gray-100 ${props.className || ''}`}
+      className={`${baseStyle} ${props.className || ''}`}
       {...props}
     >
       {props.children}
     </button>
   );
 }
+
 function Input(props) {
   return (
     <input
-      className="block mb-2 p-1 border border-gray-300 rounded-md"
+      className="input-field mb-3"
       {...props}
     />
   );
 }
+
 function Label(props) {
   return (
-    <label className="block my-1 font-medium" {...props}>
+    <label className="block mb-1 text-sm font-medium text-gray-700" {...props}>
       {props.children}
     </label>
   );
 }
+
 function UiSelect(props) {
-  return <div {...props} />;
+  const { value, onChange } = props;
+  return (
+    <div className="mb-4">
+      {props.children}
+      {/* Fix for the onValueChange warning by implementing direct setValue */}
+      <select 
+        className="input-field"
+        value={value} 
+        onChange={(e) => {
+          if (onChange) onChange(e.target.value);
+        }}
+        style={{display: 'none'}}
+      >
+        <option value="Spitzer">Spitzer</option>
+        <option value="EqualPrincipal">Equal Principal</option>
+        <option value="Balloon">Balloon</option>
+      </select>
+    </div>
+  );
 }
+
 function SelectTrigger(props) {
   return (
     <div
-      className="p-2 mb-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100"
+      className="flex items-center justify-between p-3 mb-2 bg-gray-50 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100"
       {...props}
     >
       {props.children}
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+      </svg>
     </div>
   );
 }
+
 function SelectValue(props) {
-  return <span {...props} />;
+  return <span className="text-gray-700" {...props}>{props.placeholder}</span>;
 }
+
 function SelectContent(props) {
   return (
-    <div className="border border-gray-300 p-2 mb-2 rounded-md bg-white" {...props}>
+    <div className="absolute z-10 w-full mt-1 border border-gray-300 p-2 rounded-md bg-white shadow-lg" {...props}>
       {props.children}
     </div>
   );
 }
+
 function SelectItem(props) {
   return (
-    <div className="py-1 px-2 cursor-pointer hover:bg-gray-100" {...props}>
+    <div 
+      className="py-2 px-3 cursor-pointer hover:bg-blue-50 rounded-md transition-colors"
+      onClick={() => {
+        if (props.onClick) props.onClick();
+      }}
+      {...props}
+    >
       {props.children}
     </div>
   );
@@ -322,287 +371,485 @@ export default function LoanManagementApp() {
 
   return (
     <motion.div
-      className="min-h-screen p-6 bg-gray-50"
+      className="min-h-screen bg-gray-50"
       style={{ direction }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Language selector */}
-      <div className="mb-4">
-        <Label htmlFor="languageSelect" className="mr-2">
-          {t('languageLabel')}:
-        </Label>
-        <select
-          id="languageSelect"
-          className="border rounded p-1"
-          value={lang}
-          onChange={(e) => setLang(e.target.value)}
-        >
-          <option value="en">English</option>
-          <option value="he">עברית</option>
-          <option value="ar">العربية</option>
-        </select>
+      {/* Header section with gradient */}
+      <div className="header-gradient text-white p-6 mb-6 shadow-md">
+        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+          <h1 className="text-3xl font-bold mb-4 md:mb-0">{t('appTitle')}</h1>
+          
+          {/* Language selector */}
+          <div className="flex items-center bg-white bg-opacity-20 rounded-lg p-2">
+            <Label htmlFor="languageSelect" className="mr-2 text-white">
+              {t('languageLabel')}:
+            </Label>
+            <select
+              id="languageSelect"
+              className="bg-transparent border border-white border-opacity-30 rounded p-1 text-white focus:outline-none"
+              value={lang}
+              onChange={(e) => setLang(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="he">עברית</option>
+              <option value="ar">العربية</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <h1 className="text-2xl mb-4 font-bold">{t('appTitle')}</h1>
+      <div className="container mx-auto px-4 pb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Loan Form */}
+          <Card className="lg:col-span-1">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">
+                {editingLoanId ? t('saveLoan') : t('addLoan')}
+              </h2>
+              {editingLoanId && (
+                <Button 
+                  variant="secondary" 
+                  onClick={() => {
+                    setEditingLoanId(null);
+                    setLoanName('');
+                    setLoanAmount(0);
+                    setFixedInterest(0);
+                    setPrimeRate(0);
+                    setAmortizationMethod('Spitzer');
+                    setLoanMonths(12);
+                    setStartDate('');
+                  }}
+                  className="text-sm"
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
+            
+            <CardContent>
+              <Label htmlFor="loanName">{t('loanNameLabel')}</Label>
+              <Input
+                id="loanName"
+                type="text"
+                placeholder="My Mortgage"
+                value={loanName}
+                onChange={(e) => setLoanName(e.target.value)}
+              />
 
-      <Card className="p-6 max-w-xl mb-6">
-        <CardContent>
-          <Label htmlFor="loanName">{t('loanNameLabel')}</Label>
-          <Input
-            id="loanName"
-            type="text"
-            placeholder="My Mortgage"
-            value={loanName}
-            onChange={(e) => setLoanName(e.target.value)}
-          />
+              <Label htmlFor="loanAmount">{t('loanAmountLabel')}</Label>
+              <Input
+                id="loanAmount"
+                type="number"
+                value={loanAmount}
+                onChange={(e) => setLoanAmount(Number(e.target.value))}
+              />
 
-          <Label htmlFor="loanAmount">{t('loanAmountLabel')}</Label>
-          <Input
-            id="loanAmount"
-            type="number"
-            value={loanAmount}
-            onChange={(e) => setLoanAmount(Number(e.target.value))}
-          />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="fixedInterest">{t('fixedInterestLabel')}</Label>
+                  <Input
+                    id="fixedInterest"
+                    type="number"
+                    step="0.01"
+                    value={fixedInterest}
+                    onChange={(e) => setFixedInterest(Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="primeRate">{t('primeRateLabel')}</Label>
+                  <Input
+                    id="primeRate"
+                    type="number"
+                    step="0.01"
+                    value={primeRate}
+                    onChange={(e) => setPrimeRate(Number(e.target.value))}
+                  />
+                </div>
+              </div>
 
-          <Label htmlFor="fixedInterest">{t('fixedInterestLabel')}</Label>
-          <Input
-            id="fixedInterest"
-            type="number"
-            step="0.01"
-            value={fixedInterest}
-            onChange={(e) => setFixedInterest(Number(e.target.value))}
-          />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="loanMonths">{t('loanMonthsLabel')}</Label>
+                  <Input
+                    id="loanMonths"
+                    type="number"
+                    value={loanMonths}
+                    onChange={(e) => setLoanMonths(Number(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="startDate">{t('startDateLabel')}</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+              </div>
 
-          <Label htmlFor="primeRate">{t('primeRateLabel')}</Label>
-          <Input
-            id="primeRate"
-            type="number"
-            step="0.01"
-            value={primeRate}
-            onChange={(e) => setPrimeRate(Number(e.target.value))}
-          />
+              <Label>{t('amortMethodLabel')}</Label>
+              <UiSelect 
+                value={amortizationMethod} 
+                onChange={setAmortizationMethod}
+              >
+                <SelectTrigger onClick={() => document.getElementById('amortSelect').click()}>
+                  <SelectValue placeholder={amortizationMethod} />
+                </SelectTrigger>
+                
+                <select
+                  id="amortSelect"
+                  className="hidden"
+                  value={amortizationMethod}
+                  onChange={(e) => setAmortizationMethod(e.target.value)}
+                >
+                  <option value="Spitzer">Spitzer</option>
+                  <option value="EqualPrincipal">Equal Principal</option>
+                  <option value="Balloon">Balloon</option>
+                </select>
+                
+                <SelectContent>
+                  <SelectItem onClick={() => setAmortizationMethod("Spitzer")}>
+                    Spitzer
+                  </SelectItem>
+                  <SelectItem onClick={() => setAmortizationMethod("EqualPrincipal")}>
+                    Equal Principal
+                  </SelectItem>
+                  <SelectItem onClick={() => setAmortizationMethod("Balloon")}>
+                    Balloon
+                  </SelectItem>
+                </SelectContent>
+              </UiSelect>
 
-          <Label htmlFor="loanMonths">{t('loanMonthsLabel')}</Label>
-          <Input
-            id="loanMonths"
-            type="number"
-            value={loanMonths}
-            onChange={(e) => setLoanMonths(Number(e.target.value))}
-          />
+              <Button 
+                variant="primary" 
+                className="w-full mt-4" 
+                onClick={handleSubmit}
+              >
+                {editingLoanId ? t('saveLoan') : t('addLoan')}
+              </Button>
+            </CardContent>
+          </Card>
 
-          <Label htmlFor="startDate">{t('startDateLabel')}</Label>
-          <Input
-            id="startDate"
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
+      {/* Loan Comparison Section */}
+          <motion.div
+            className="lg:col-span-2"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">{t('comparison')}</h2>
+              
+              {loans.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                  <p className="text-gray-500 text-lg">{t('noLoans')}</p>
+                  <p className="text-gray-400 mt-2">Add your first loan using the form on the left.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {loans.map((loan) => {
+                    const {
+                      totalInterest,
+                      totalPrincipal,
+                      interestPaidSoFar,
+                      interestRemaining,
+                      principalPaidSoFar,
+                      principalRemaining,
+                      schedule,
+                      paidMonths
+                    } = computePartialSums(loan);
 
-          <Label>{t('amortMethodLabel')}</Label>
-          <UiSelect onValueChange={(val) => setAmortizationMethod(val)} value={amortizationMethod}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an option" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Spitzer">Spitzer</SelectItem>
-              <SelectItem value="EqualPrincipal">Equal Principal</SelectItem>
-              <SelectItem value="Balloon">Balloon</SelectItem>
-            </SelectContent>
-          </UiSelect>
+                    const nextPaymentIndex = paidMonths;
+                    const nextPayment =
+                      nextPaymentIndex < schedule.length ? schedule[nextPaymentIndex] : undefined;
+                      
+                    // Calculate progress percentages for visual indicators
+                    const interestPaidPercent = totalInterest > 0 
+                      ? (interestPaidSoFar / totalInterest) * 100 
+                      : 0;
+                      
+                    const principalPaidPercent = totalPrincipal > 0 
+                      ? (principalPaidSoFar / totalPrincipal) * 100 
+                      : 0;
+                      
+                    const monthsPassedPercent = loan.loanMonths > 0 
+                      ? (paidMonths / loan.loanMonths) * 100 
+                      : 0;
 
-          <Button className="w-full" onClick={handleSubmit}>
-            {editingLoanId ? t('saveLoan') : t('addLoan')}
-          </Button>
-        </CardContent>
-      </Card>
+                    // Data for mini donut chart
+                    const paymentBreakdown = [
+                      { name: 'Principal', value: totalPrincipal },
+                      { name: 'Interest', value: totalInterest }
+                    ];
+                    
+                    const COLORS = ['#4f46e5', '#ef4444'];
 
-      <motion.div
-        className="mb-6"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-      >
-        <h2 className="text-xl font-semibold mb-4">{t('comparison')}</h2>
-        {loans.length === 0 ? (
-          <p className="text-gray-500">{t('noLoans')}</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {loans.map((loan) => {
-              const {
-                totalInterest,
-                totalPrincipal,
-                interestPaidSoFar,
-                interestRemaining,
-                principalPaidSoFar,
-                principalRemaining,
-                schedule,
-                paidMonths
-              } = computePartialSums(loan);
-
-              const nextPaymentIndex = paidMonths;
-              const nextPayment =
-                nextPaymentIndex < schedule.length ? schedule[nextPaymentIndex] : undefined;
-
-              return (
-                <Card key={loan.id}>
-                  <CardContent>
-                    <p className="mb-1">
-                      <strong>{t('name')}:</strong> {loan.name}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('loanId')}:</strong> {loan.id}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('amount')}:</strong> {loan.loanAmount}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('fixed')}:</strong> {loan.fixedInterest}%
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('prime')}:</strong> {loan.primeRate}%
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('months')}:</strong> {loan.loanMonths}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('startDateLabel')}:</strong> {loan.startDate || 'Not set'}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('monthsLeft')}:</strong> {monthsLeft(loan)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('method')}:</strong> {loan.amortizationMethod}
-                    </p>
-
-                    <hr className="my-2" />
-                    <p className="mb-1">
-                      <strong>{t('totalInterest')}:</strong> {totalInterest.toFixed(2)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('interestPaid')}:</strong> {interestPaidSoFar.toFixed(2)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('interestRemaining')}:</strong> {interestRemaining.toFixed(2)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('totalPrincipal')}:</strong> {totalPrincipal.toFixed(2)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('principalPaid')}:</strong> {principalPaidSoFar.toFixed(2)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>{t('principalRemaining')}:</strong> {principalRemaining.toFixed(2)}
-                    </p>
-
-                    <div className="bg-gray-100 p-2 my-2 rounded-xl">
-                      <p className="font-semibold mb-1">{t('nextPayment')}:</p>
-                      {nextPayment ? (
-                        <div>
-                          <p>
-                            <strong>{t('dueDate')}:</strong>{' '}
-                            {nextPayment.paymentDate ? formatDate(nextPayment.paymentDate) : '-'}
-                          </p>
-                          <p>
-                            <strong>{t('interest')}:</strong> {nextPayment.interest.toFixed(2)}
-                          </p>
-                          <p>
-                            <strong>{t('principal')}:</strong> {nextPayment.principal.toFixed(2)}
-                          </p>
-                          <p>
-                            <strong>{t('total')}:</strong>{' '}
-                            {(nextPayment.interest + nextPayment.principal).toFixed(2)}
-                          </p>
+                    return (
+                      <Card key={loan.id} className="flex flex-col">
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h3 className="text-xl font-semibold text-gray-800">{loan.name}</h3>
+                            <p className="text-gray-500 text-sm">{loan.amortizationMethod}</p>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button 
+                              variant="secondary" 
+                              className="p-2 h-8 w-8 flex items-center justify-center" 
+                              onClick={() => handleEditLoan(loan)}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                              </svg>
+                            </Button>
+                            <Button 
+                              variant="danger" 
+                              className="p-2 h-8 w-8 flex items-center justify-center" 
+                              onClick={() => handleRemoveLoan(loan.id)}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                            </Button>
+                          </div>
                         </div>
-                      ) : (
-                        <p>{t('fullyPaid')}</p>
-                      )}
-                    </div>
+                        
+                        <CardContent>
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="stat-card">
+                              <p className="text-xs text-gray-500 uppercase">{t('amount')}</p>
+                              <p className="text-xl font-bold">{loan.loanAmount.toLocaleString()}</p>
+                            </div>
+                            <div className="stat-card">
+                              <p className="text-xs text-gray-500 uppercase">{t('totalInterest')}</p>
+                              <p className="text-xl font-bold text-blue-600">{totalInterest.toFixed(2)}</p>
+                            </div>
+                            <div className="stat-card">
+                              <p className="text-xs text-gray-500 uppercase">{t('fixed')} + {t('prime')}</p>
+                              <p className="text-xl font-bold">{loan.fixedInterest + loan.primeRate}%</p>
+                              <div className="flex text-xs text-gray-500 mt-1">
+                                <span className="mr-2">{loan.fixedInterest}% {t('fixed')}</span>
+                                <span>{loan.primeRate}% {t('prime')}</span>
+                              </div>
+                            </div>
+                            <div className="stat-card">
+                              <p className="text-xs text-gray-500 uppercase">{t('months')}</p>
+                              <p className="text-xl font-bold">{loan.loanMonths}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {t('startDateLabel')}: {loan.startDate || 'Not set'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Progress bars */}
+                          <div className="mb-4 space-y-3">
+                            <div>
+                              <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                <span>{t('monthsLeft')}: {monthsLeft(loan)}</span>
+                                <span>{Math.round(monthsPassedPercent)}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-600 h-2 rounded-full" 
+                                  style={{ width: `${monthsPassedPercent}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                <span>{t('principalPaid')}</span>
+                                <span>{Math.round(principalPaidPercent)}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-green-500 h-2 rounded-full" 
+                                  style={{ width: `${principalPaidPercent}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                <span>{t('interestPaid')}</span>
+                                <span>{Math.round(interestPaidPercent)}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-red-500 h-2 rounded-full" 
+                                  style={{ width: `${interestPaidPercent}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Next payment card */}
+                          <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-4">
+                            <div className="flex justify-between items-center mb-2">
+                              <h4 className="font-semibold text-blue-800">{t('nextPayment')}</h4>
+                              {nextPayment && nextPayment.paymentDate && (
+                                <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                  {formatDate(nextPayment.paymentDate)}
+                                </span>
+                              )}
+                            </div>
+                            
+                            {nextPayment ? (
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="bg-white p-2 rounded-md">
+                                  <p className="text-xs text-gray-500">{t('interest')}</p>
+                                  <p className="font-semibold text-red-500">{nextPayment.interest.toFixed(2)}</p>
+                                </div>
+                                <div className="bg-white p-2 rounded-md">
+                                  <p className="text-xs text-gray-500">{t('principal')}</p>
+                                  <p className="font-semibold text-green-500">{nextPayment.principal.toFixed(2)}</p>
+                                </div>
+                                <div className="bg-white p-2 rounded-md">
+                                  <p className="text-xs text-gray-500">{t('total')}</p>
+                                  <p className="font-semibold">{(nextPayment.interest + nextPayment.principal).toFixed(2)}</p>
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-center text-blue-800">{t('fullyPaid')}</p>
+                            )}
+                          </div>
+                          
+                          <Button 
+                            variant="secondary"
+                            className="w-full flex items-center justify-center"
+                            onClick={() => toggleExpanded(loan.id)}
+                          >
+                            {expandedLoanIds.includes(loan.id) ? t('hideSchedule') : t('showSchedule')}
+                            <svg 
+                              xmlns="http://www.w3.org/2000/svg" 
+                              className={`h-4 w-4 ml-2 transition-transform duration-200 ${expandedLoanIds.includes(loan.id) ? 'rotate-180' : ''}`} 
+                              viewBox="0 0 20 20" 
+                              fill="currentColor"
+                            >
+                              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </Button>
 
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <Button onClick={() => toggleExpanded(loan.id)}>
-                        {expandedLoanIds.includes(loan.id)
-                          ? t('hideSchedule')
-                          : t('showSchedule')}
-                      </Button>
-                      <Button onClick={() => handleEditLoan(loan)}>
-                        {t('edit')}
-                      </Button>
-                      <Button onClick={() => handleRemoveLoan(loan.id)}>
-                        {t('remove')}
-                      </Button>
-                    </div>
+                          {expandedLoanIds.includes(loan.id) && (
+                            <div className="overflow-auto mt-4 bg-gray-50 rounded-lg p-4">
+                              <table className="w-full text-sm border-collapse bg-white shadow-sm rounded-lg overflow-hidden">
+                                <thead className="bg-gray-100">
+                                  <tr>
+                                    <th className="p-2 text-left">{t('months')}</th>
+                                    <th className="p-2 text-left">{t('dueDate')}</th>
+                                    <th className="p-2 text-right">{t('interest')}</th>
+                                    <th className="p-2 text-right">{t('principal')}</th>
+                                    <th className="p-2 text-right">{t('total')}</th>
+                                    <th className="p-2 text-right">{t('principalRemaining')}</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {schedule.map((entry, index) => (
+                                    <tr 
+                                      key={entry.month} 
+                                      className={`border-t border-gray-100 ${index === nextPaymentIndex - 1 ? 'bg-blue-50' : ''}`}
+                                    >
+                                      <td className="p-2">{entry.month}</td>
+                                      <td className="p-2">
+                                        {entry.paymentDate ? formatDate(entry.paymentDate) : '-'}
+                                      </td>
+                                      <td className="p-2 text-right text-red-500">
+                                        {entry.interest.toFixed(2)}
+                                      </td>
+                                      <td className="p-2 text-right text-green-500">
+                                        {entry.principal.toFixed(2)}
+                                      </td>
+                                      <td className="p-2 text-right font-medium">
+                                        {(entry.interest + entry.principal).toFixed(2)}
+                                      </td>
+                                      <td className="p-2 text-right">
+                                        {entry.balance.toFixed(2)}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
-                    {expandedLoanIds.includes(loan.id) && (
-                      <div className="overflow-auto mt-4">
-                        <table className="w-full text-sm border border-gray-200">
-                          <thead className="bg-gray-100">
-                            <tr>
-                              <th className="p-2 border border-gray-200">{t('months')}</th>
-                              <th className="p-2 border border-gray-200">{t('dueDate')}</th>
-                              <th className="p-2 border border-gray-200">{t('interest')}</th>
-                              <th className="p-2 border border-gray-200">{t('principal')}</th>
-                              <th className="p-2 border border-gray-200">{t('total')}</th>
-                              <th className="p-2 border border-gray-200">
-                                {t('principalRemaining')}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {schedule.map((entry) => (
-                              <tr key={entry.month}>
-                                <td className="p-2 border border-gray-200">{entry.month}</td>
-                                <td className="p-2 border border-gray-200">
-                                  {entry.paymentDate ? formatDate(entry.paymentDate) : '-'}
-                                </td>
-                                <td className="p-2 border border-gray-200">
-                                  {entry.interest.toFixed(2)}
-                                </td>
-                                <td className="p-2 border border-gray-200">
-                                  {entry.principal.toFixed(2)}
-                                </td>
-                                <td className="p-2 border border-gray-200">
-                                  {(entry.interest + entry.principal).toFixed(2)}
-                                </td>
-                                <td className="p-2 border border-gray-200">
-                                  {entry.balance.toFixed(2)}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </motion.div>
-
-      {loans.length > 1 && (
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-          <h2 className="text-xl font-semibold mb-4">{t('chartComparison')}</h2>
-          <div className="w-full h-64 bg-white rounded-2xl shadow p-4">
-            <ResponsiveContainer>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="interest"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-      )}
+      {loans.length > 0 && (
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }} 
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="bg-white rounded-xl shadow-md p-6"
+              >
+                <h2 className="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">{t('chartComparison')}</h2>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Bar Chart */}
+                  <div className="bg-gray-50 rounded-lg p-4 h-80">
+                    <h3 className="text-lg font-medium mb-4 text-center text-gray-700">{t('totalInterest')}</h3>
+                    <ResponsiveContainer>
+                      <BarChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            borderRadius: '8px',
+                            border: 'none',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Bar dataKey="interest" fill="#4f46e5" radius={[6, 6, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  {/* Line Chart */}
+                  <div className="bg-gray-50 rounded-lg p-4 h-80">
+                    <h3 className="text-lg font-medium mb-4 text-center text-gray-700">{t('interest')} {t('comparison')}</h3>
+                    <ResponsiveContainer>
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            borderRadius: '8px',
+                            border: 'none',
+                            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                          }}
+                        />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="interest"
+                          stroke="#4f46e5"
+                          strokeWidth={3}
+                          dot={{ r: 6, strokeWidth: 2 }}
+                          activeDot={{ r: 8, strokeWidth: 0, fill: '#7c3aed' }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   );
 }
