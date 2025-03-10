@@ -38,7 +38,7 @@ function Button(props) {
     : props.variant === 'danger' 
       ? 'btn-danger' 
       : 'btn-secondary';
-      
+
   return (
     <button
       className={`${baseStyle} ${props.className || ''}`}
@@ -181,7 +181,7 @@ export default function LoanManagementApp() {
   const [loans, setLoans] = useState([]);
   const [lang, setLang] = useState('en');
   const [loanName, setLoanName] = useState('');
-  
+
   // Detect user's country and set appropriate language
   useEffect(() => {
     async function detectCountry() {
@@ -189,7 +189,7 @@ export default function LoanManagementApp() {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
         const country = data.country_code;
-        
+
         // Set language based on country
         if (country === 'IL') {
           setLang('he');
@@ -201,7 +201,7 @@ export default function LoanManagementApp() {
         console.log("Could not detect country, using default language");
       }
     }
-    
+
     detectCountry();
   }, []);
   const [loanAmount, setLoanAmount] = useState(0);
@@ -389,7 +389,12 @@ export default function LoanManagementApp() {
     return `${year}-${month}-${day}`;
   }
 
-  const t = (key) => translations[lang][key];
+  function t(key) {
+    if (!translations[lang]) {
+      return translations['en'][key] || key;
+    }
+    return translations[lang][key] || key;
+  }
   const direction = isRTL(lang) ? 'rtl' : 'ltr';
 
   return (
@@ -404,7 +409,7 @@ export default function LoanManagementApp() {
       <div className="header-gradient text-white p-6 mb-6 shadow-md">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
           <h1 className="text-3xl font-bold mb-4 md:mb-0">{t('appTitle')}</h1>
-          
+
           {/* Language selector */}
           <div className="flex items-center bg-white bg-opacity-20 rounded-lg p-2">
             <Label htmlFor="languageSelect" className="mr-2 text-white">
@@ -451,7 +456,7 @@ export default function LoanManagementApp() {
                 </Button>
               )}
             </div>
-            
+
             <CardContent>
               <Label htmlFor="loanName">{t('loanNameLabel')}</Label>
               <Input
@@ -552,7 +557,7 @@ export default function LoanManagementApp() {
           >
             <div className="bg-white rounded-xl shadow-md p-6 mb-6">
               <h2 className="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">{t('comparison')}</h2>
-              
+
               {loans.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 text-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -578,16 +583,16 @@ export default function LoanManagementApp() {
                     const nextPaymentIndex = paidMonths;
                     const nextPayment =
                       nextPaymentIndex < schedule.length ? schedule[nextPaymentIndex] : undefined;
-                      
+
                     // Calculate progress percentages for visual indicators
                     const interestPaidPercent = totalInterest > 0 
                       ? (interestPaidSoFar / totalInterest) * 100 
                       : 0;
-                      
+
                     const principalPaidPercent = totalPrincipal > 0 
                       ? (principalPaidSoFar / totalPrincipal) * 100 
                       : 0;
-                      
+
                     const monthsPassedPercent = loan.loanMonths > 0 
                       ? (paidMonths / loan.loanMonths) * 100 
                       : 0;
@@ -597,7 +602,7 @@ export default function LoanManagementApp() {
                       { name: 'Principal', value: totalPrincipal },
                       { name: 'Interest', value: totalInterest }
                     ];
-                    
+
                     const COLORS = ['#4f46e5', '#ef4444'];
 
                     return (
@@ -628,7 +633,7 @@ export default function LoanManagementApp() {
                             </Button>
                           </div>
                         </div>
-                        
+
                         <CardContent>
                           <div className="grid grid-cols-2 gap-4 mb-4">
                             <div className="stat-card">
@@ -655,7 +660,7 @@ export default function LoanManagementApp() {
                               </p>
                             </div>
                           </div>
-                          
+
                           {/* Progress bars */}
                           <div className="mb-4 space-y-3">
                             <div>
@@ -670,7 +675,7 @@ export default function LoanManagementApp() {
                                 ></div>
                               </div>
                             </div>
-                            
+
                             <div>
                               <div className="flex justify-between text-xs text-gray-600 mb-1">
                                 <span>{t('principalPaid')}</span>
@@ -683,7 +688,7 @@ export default function LoanManagementApp() {
                                 ></div>
                               </div>
                             </div>
-                            
+
                             <div>
                               <div className="flex justify-between text-xs text-gray-600 mb-1">
                                 <span>{t('interestPaid')}</span>
@@ -697,7 +702,7 @@ export default function LoanManagementApp() {
                               </div>
                             </div>
                           </div>
-                          
+
                           {/* Next payment card */}
                           <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-4">
                             <div className="flex justify-between items-center mb-2">
@@ -708,7 +713,7 @@ export default function LoanManagementApp() {
                                 </span>
                               )}
                             </div>
-                            
+
                             {nextPayment ? (
                               <div className="grid grid-cols-3 gap-2 text-center">
                                 <div className="bg-white p-2 rounded-md">
@@ -728,7 +733,7 @@ export default function LoanManagementApp() {
                               <p className="text-center text-blue-800">{t('fullyPaid')}</p>
                             )}
                           </div>
-                          
+
                           <Button 
                             variant="secondary"
                             className="w-full flex items-center justify-center"
@@ -753,7 +758,7 @@ export default function LoanManagementApp() {
                                     <th className="p-2 text-left">{t('months')}</th>
                                     <th className="p-2 text-left">{t('dueDate')}</th>
                                     <th className="p-2 text-right">{t('interest')}</th>
-                                    <th className="p-2 text-right">{t('principal')}</th>
+                                    <th className="p-2 text-right">{t('principal')}}</th>
                                     <th className="p-2 text-right">{t('total')}</th>
                                     <th className="p-2 text-right">{t('principalRemaining')}</th>
                                   </tr>
@@ -802,7 +807,7 @@ export default function LoanManagementApp() {
                 className="bg-white rounded-xl shadow-md p-6"
               >
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800 border-b pb-2">{t('chartComparison')}</h2>
-                
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Bar Chart */}
                   <div className="bg-gray-50 rounded-lg p-4 h-80">
@@ -824,7 +829,7 @@ export default function LoanManagementApp() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  
+
                   {/* Line Chart */}
                   <div className="bg-gray-50 rounded-lg p-4 h-80">
                     <h3 className="text-lg font-medium mb-4 text-center text-gray-700">{t('interest')} {t('comparison')}</h3>
