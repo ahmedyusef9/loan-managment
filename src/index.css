@@ -1,3 +1,43 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Adding custom styles for improved UI */
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f7f9fc;
+}
+
+.loan-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.loan-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card {
+  @apply bg-white rounded-lg p-4 shadow-sm border border-gray-100;
+}
+
+.input-field {
+  @apply w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+}
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-md transition-colors duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;
+}
+
+.header-gradient {
+  background: linear-gradient(to right, #4f46e5, #7c3aed);
+}

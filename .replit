@@ -2,3 +2,30 @@ modules = ["nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Start App"
+author = 38884992
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
+
+[[workflows.workflow]]
+name = "Run"
+author = 38884992
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
