@@ -20,7 +20,7 @@ function Button(props) {
       return false;
     }
   });
-  
+
   return <button style={{ 
     padding: '0.5rem 1rem', 
     margin: '0.2rem', 
@@ -93,6 +93,7 @@ function SelectItem(props) {
 
 const translations = {
   en: {
+    addFirstLoan: 'Add your first loan using the form on the left',
     languageLabel: 'Language',
     appTitle: 'Loan Management Application',
     loanNameLabel: 'Loan Name',
@@ -133,6 +134,7 @@ const translations = {
     chartComparison: 'Comparison Chart'
   },
   he: {
+    addFirstLoan: 'הוסף הלוואה ראשונה באמצעות הטופס משמאל',
     languageLabel: 'שפה',
     appTitle: 'ניהול הלוואות',
     loanNameLabel: 'שם הלוואה',
@@ -173,6 +175,7 @@ const translations = {
     chartComparison: 'תרשים השוואה'
   },
   ar: {
+    addFirstLoan: 'أضف أول قرض لك باستخدام النموذج الموجود على اليسار',
     languageLabel: 'اللغة',
     appTitle: 'إدارة القروض',
     loanNameLabel: 'اسم القرض',
