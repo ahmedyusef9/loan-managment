@@ -512,12 +512,26 @@ export default function LoanManagementApp() {
                     }}
                     onClick={() => setIsOpen(!isOpen)}>
                     <SelectValue style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{amortizationMethod}</SelectValue>
-                    <span style={{ 
-                      position: 'absolute',
-                      [direction === 'rtl' ? 'left' : 'right']: '0.75rem',
-                      top: '50%',
-                      transform: 'translateY(-50%)'
-                    }}>▼</span>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="12" 
+                      height="12" 
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      style={{
+                        position: 'absolute',
+                        [direction === 'rtl' ? 'left' : 'right']: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <path 
+                        fillRule="evenodd" 
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
+                        clipRule="evenodd" 
+                      />
+                    </svg>
                   </SelectTrigger>
                   <SelectContent style={{
                     display: isOpen ? 'block' : 'none',
