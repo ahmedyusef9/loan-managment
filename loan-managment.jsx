@@ -25,7 +25,7 @@ function Button(props) {
     margin: '0.2rem', 
     border: 'none', 
     borderRadius: '8px',
-    backgroundColor: isActionButton ? '#2563EB' : '#E5E7EB',
+    backgroundColor: isActionButton ? '#4CAF50' : '#E5E7EB',
     color: isActionButton ? 'white' : '#374151',
     cursor: 'pointer',
     transition: 'all 0.2s',
