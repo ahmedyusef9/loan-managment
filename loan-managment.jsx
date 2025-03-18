@@ -20,18 +20,34 @@ function Button(props) {
     }
   });
 
+  const isMainAction = ['addLoan', 'saveLoan'].some(key => {
+    try {
+      return Object.values(translations).some(langObj => 
+        langObj[key] === props.children
+      );
+    } catch (e) {
+      return false;
+    }
+  });
+
   return <button style={{ 
     padding: '0.8rem 1.2rem', 
     margin: '0.2rem', 
     border: 'none', 
     borderRadius: '8px',
-    backgroundColor: isActionButton ? '#4CAF50' : '#E5E7EB',
+    backgroundColor: isMainAction ? '#2563EB' : isActionButton ? '#4CAF50' : '#E5E7EB',
     color: isActionButton ? 'white' : '#374151',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    transition: 'all 0.3s ease',
     fontWeight: '600',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    width: props.className?.includes('w-full') ? '100%' : 'auto'
+    boxShadow: isMainAction ? '0 4px 6px rgba(37, 99, 235, 0.2)' : '0 2px 4px rgba(0,0,0,0.1)',
+    width: props.className?.includes('w-full') ? '100%' : 'auto',
+    transform: 'translateY(0)',
+    '&:hover': {
+      transform: isMainAction ? 'translateY(-2px)' : 'none',
+      boxShadow: isMainAction ? '0 6px 8px rgba(37, 99, 235, 0.3)' : '0 2px 4px rgba(0,0,0,0.1)',
+      backgroundColor: isMainAction ? '#1d4ed8' : isActionButton ? '#43A047' : '#D1D5DB'
+    }
   }} {...props}>{props.children}</button>;
 }
 function Input(props) {
