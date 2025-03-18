@@ -10,9 +10,8 @@ function CardContent(props) {
 }
 function Button(props) {
   // Check if button contains action text regardless of language
-  const isActionButton = ['addLoan', 'showSchedule', 'hideSchedule'].some(key => {
+  const isActionButton = ['addLoan', 'saveLoan', 'showSchedule', 'hideSchedule'].some(key => {
     try {
-      // Try to match with any language translation
       return Object.values(translations).some(langObj => 
         langObj[key] === props.children
       );
@@ -20,16 +19,19 @@ function Button(props) {
       return false;
     }
   });
-  
+
   return <button style={{ 
-    padding: '0.5rem 1rem', 
+    padding: '0.8rem 1.2rem', 
     margin: '0.2rem', 
-    border: '1px solid #ccc', 
-    borderRadius: '4px',
-    backgroundColor: isActionButton ? '#3B82F6' : '',
-    color: isActionButton ? 'white' : '',
+    border: 'none', 
+    borderRadius: '8px',
+    backgroundColor: isActionButton ? '#4CAF50' : '#E5E7EB',
+    color: isActionButton ? 'white' : '#374151',
     cursor: 'pointer',
-    transition: 'background-color 0.2s'
+    transition: 'all 0.2s',
+    fontWeight: '600',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    width: props.className?.includes('w-full') ? '100%' : 'auto'
   }} {...props}>{props.children}</button>;
 }
 function Input(props) {
@@ -53,7 +55,8 @@ function SelectTrigger(props) {
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: isRtl ? 'flex-end' : 'space-between'
+    justifyContent: isRtl ? 'flex-end' : 'space-between',
+    paddingRight: '2rem'
   }} {...props}>
     {props.children}
     <div style={{ 
@@ -93,8 +96,9 @@ function SelectItem(props) {
 
 const translations = {
   en: {
+    addFirstLoan: 'Add your first loan using the form on the left',
     languageLabel: 'Language',
-    appTitle: 'Loan Management Application',
+    appTitle: '4eyesloan',
     loanNameLabel: 'Loan Name',
     loanAmountLabel: 'Loan Amount',
     fixedInterestLabel: 'Fixed Annual Interest Rate',
@@ -130,9 +134,13 @@ const translations = {
     fixed: 'Fixed Interest',
     prime: 'Prime Rate',
     months: 'Months',
-    chartComparison: 'Comparison Chart'
+    chartComparison: 'Comparison Chart',
+    spitzerMethod: 'Spitzer (Fixed Payment)',
+    equalPrincipalMethod: 'Equal Principal',
+    balloonMethod: 'Balloon Payment'
   },
   he: {
+    addFirstLoan: 'הוסף הלוואה ראשונה באמצעות הטופס משמאל',
     languageLabel: 'שפה',
     appTitle: 'ניהול הלוואות',
     loanNameLabel: 'שם הלוואה',
@@ -173,6 +181,7 @@ const translations = {
     chartComparison: 'תרשים השוואה'
   },
   ar: {
+    addFirstLoan: 'أضف أول قرض لك باستخدام النموذج الموجود على اليسار',
     languageLabel: 'اللغة',
     appTitle: 'إدارة القروض',
     loanNameLabel: 'اسم القرض',
@@ -409,24 +418,25 @@ export default function LoanManagementApp() {
   return (
     <motion.div
       className="min-h-screen p-6 bg-gray-50"
-      style={{ direction }}
+      style={{ direction, textAlign: direction === 'rtl' ? 'right' : 'left' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="mb-4">
-        <Label htmlFor="languageSelect" className="mr-2">
+      <div className="mb-4 flex items-center justify-end">
+        <Label htmlFor="languageSelect" className={`${direction === 'rtl' ? 'ml-2' : 'mr-2'}`}>
           {t('languageLabel')}:
         </Label>
         <select
           id="languageSelect"
-          className="border rounded p-1"
+          className="border rounded p-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={lang}
           onChange={(e) => setLang(e.target.value)}
+          style={{ direction: 'ltr' }}
         >
           <option value="en">English</option>
-          <option value="he">עברית</option>
-          <option value="ar">العربية</option>
+          <option value="he" style={{ direction: 'rtl' }}>עברית</option>
+          <option value="ar" style={{ direction: 'rtl' }}>العربية</option>
         </select>
       </div>
       <h1 className="text-2xl mb-4 font-bold">{t('appTitle')}</h1>
@@ -485,14 +495,58 @@ export default function LoanManagementApp() {
           />
           <Label>{t('amortMethodLabel')}</Label>
           <UiSelect>
-            <SelectTrigger className="mb-2" onClick={() => document.getElementById('amortMethodDropdown').style.display = document.getElementById('amortMethodDropdown').style.display === 'none' ? 'block' : 'none'}>
-              <SelectValue>{amortizationMethod}</SelectValue>
-            </SelectTrigger>
-            <SelectContent id="amortMethodDropdown" style={{display: 'none'}}>
-              <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Spitzer</SelectItem>
-              <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Equal Principal</SelectItem>
-              <SelectItem onClick={() => {setAmortizationMethod('Balloon'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Balloon</SelectItem>
-            </SelectContent>
+            {(() => {
+              const [isOpen, setIsOpen] = useState(false);
+              return (
+                <>
+                  <SelectTrigger 
+                    className="mb-2" 
+                    style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center', 
+                      padding: '0.5rem',
+                      position: 'relative',
+                      paddingInlineEnd: '2rem',
+                      paddingInlineStart: '0.75rem'
+                    }}
+                    onClick={() => setIsOpen(!isOpen)}>
+                    <SelectValue style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{amortizationMethod}</SelectValue>
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="12" 
+                      height="12" 
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      style={{
+                        position: 'absolute',
+                        [direction === 'rtl' ? 'left' : 'right']: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <path 
+                        fillRule="evenodd" 
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
+                        clipRule="evenodd" 
+                      />
+                    </svg>
+                  </SelectTrigger>
+                  <SelectContent style={{
+                    display: isOpen ? 'block' : 'none',
+                    marginTop: '0.25rem',
+                    position: 'absolute',
+                    width: '100%',
+                    zIndex: 10
+                  }}>
+                    <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); setIsOpen(false)}}>{t('spitzerMethod')}</SelectItem>
+                    <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); setIsOpen(false)}}>{t('equalPrincipalMethod')}</SelectItem>
+                    <SelectItem onClick={() => {setAmortizationMethod('Balloon'); setIsOpen(false)}}>{t('balloonMethod')}</SelectItem>
+                  </SelectContent>
+                </>
+              );
+            })()}
           </UiSelect>
           <Button className="w-full" onClick={handleSubmit}>
             {editingLoanId ? t('saveLoan') : t('addLoan')}
@@ -563,6 +617,48 @@ export default function LoanManagementApp() {
                     </div>
                     {expandedLoanIds.includes(loan.id) && (
                       <div className="overflow-auto mt-4">
+                        <div className="mb-2 flex gap-2">
+                          <Button onClick={() => {
+                            const headers = ['Month', 'Due Date', 'Interest', 'Principal', 'Total', 'Balance'];
+                            const csvContent = [
+                              headers.join(','),
+                              ...schedule.map(entry => [
+                                entry.month,
+                                entry.paymentDate ? formatDate(entry.paymentDate) : '-',
+                                entry.interest.toFixed(2),
+                                entry.principal.toFixed(2),
+                                (entry.interest + entry.principal).toFixed(2),
+                                entry.balance.toFixed(2)
+                              ].join(','))
+                            ].join('\n');
+                            
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = `${loan.name}_schedule.csv`;
+                            link.click();
+                          }}>
+                            Export CSV
+                          </Button>
+                          <Button onClick={() => {
+                            const XLSX = require('xlsx');
+                            const data = schedule.map(entry => ({
+                              Month: entry.month,
+                              'Due Date': entry.paymentDate ? formatDate(entry.paymentDate) : '-',
+                              Interest: entry.interest.toFixed(2),
+                              Principal: entry.principal.toFixed(2),
+                              Total: (entry.interest + entry.principal).toFixed(2),
+                              Balance: entry.balance.toFixed(2)
+                            }));
+                            
+                            const ws = XLSX.utils.json_to_sheet(data);
+                            const wb = XLSX.utils.book_new();
+                            XLSX.utils.book_append_sheet(wb, ws, 'Schedule');
+                            XLSX.writeFile(wb, `${loan.name}_schedule.xlsx`);
+                          }}>
+                            Export Excel
+                          </Button>
+                        </div>
                         <table className="w-full text-sm border border-gray-200">
                           <thead className="bg-gray-100">
                             <tr>
