@@ -10,9 +10,8 @@ function CardContent(props) {
 }
 function Button(props) {
   // Check if button contains action text regardless of language
-  const isActionButton = ['addLoan', 'showSchedule', 'hideSchedule'].some(key => {
+  const isActionButton = ['addLoan', 'saveLoan', 'showSchedule', 'hideSchedule'].some(key => {
     try {
-      // Try to match with any language translation
       return Object.values(translations).some(langObj => 
         langObj[key] === props.children
       );
@@ -22,14 +21,17 @@ function Button(props) {
   });
 
   return <button style={{ 
-    padding: '0.5rem 1rem', 
+    padding: '0.8rem 1.2rem', 
     margin: '0.2rem', 
-    border: '1px solid #ccc', 
-    borderRadius: '4px',
-    backgroundColor: isActionButton ? '#3B82F6' : '',
-    color: isActionButton ? 'white' : '',
+    border: 'none', 
+    borderRadius: '8px',
+    backgroundColor: isActionButton ? '#2563EB' : '#E5E7EB',
+    color: isActionButton ? 'white' : '#374151',
     cursor: 'pointer',
-    transition: 'background-color 0.2s'
+    transition: 'all 0.2s',
+    fontWeight: '600',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    width: props.className?.includes('w-full') ? '100%' : 'auto'
   }} {...props}>{props.children}</button>;
 }
 function Input(props) {
@@ -53,7 +55,8 @@ function SelectTrigger(props) {
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: isRtl ? 'flex-end' : 'space-between'
+    justifyContent: isRtl ? 'flex-end' : 'space-between',
+    paddingRight: '2rem'
   }} {...props}>
     {props.children}
     <div style={{ 
@@ -95,7 +98,7 @@ const translations = {
   en: {
     addFirstLoan: 'Add your first loan using the form on the left',
     languageLabel: 'Language',
-    appTitle: 'Loan Management Application',
+    appTitle: '4eyesloan',
     loanNameLabel: 'Loan Name',
     loanAmountLabel: 'Loan Amount',
     fixedInterestLabel: 'Fixed Annual Interest Rate',
@@ -131,7 +134,10 @@ const translations = {
     fixed: 'Fixed Interest',
     prime: 'Prime Rate',
     months: 'Months',
-    chartComparison: 'Comparison Chart'
+    chartComparison: 'Comparison Chart',
+    spitzerMethod: 'Spitzer (Fixed Payment)',
+    equalPrincipalMethod: 'Equal Principal',
+    balloonMethod: 'Balloon Payment'
   },
   he: {
     addFirstLoan: 'הוסף הלוואה ראשונה באמצעות הטופס משמאל',
@@ -492,9 +498,9 @@ export default function LoanManagementApp() {
               <SelectValue>{amortizationMethod}</SelectValue>
             </SelectTrigger>
             <SelectContent id="amortMethodDropdown" style={{display: 'none'}}>
-              <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Spitzer</SelectItem>
-              <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Equal Principal</SelectItem>
-              <SelectItem onClick={() => {setAmortizationMethod('Balloon'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>Balloon</SelectItem>
+              <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>{t('spitzerMethod')}</SelectItem>
+              <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>{t('equalPrincipalMethod')}</SelectItem>
+              <SelectItem onClick={() => {setAmortizationMethod('Balloon'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>{t('balloonMethod')}</SelectItem>
             </SelectContent>
           </UiSelect>
           <Button className="w-full" onClick={handleSubmit}>
