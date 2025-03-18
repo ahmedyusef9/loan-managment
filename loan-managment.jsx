@@ -14,12 +14,7 @@ import {
 function Card(props) {
   return (
     <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        marginBottom: "1rem",
-        padding: "1rem",
-      }}
+      className="border border-gray-200 rounded-lg mb-4 p-4 shadow-md hover:shadow-lg transition-shadow"
       {...props}
     >
       {props.children}
