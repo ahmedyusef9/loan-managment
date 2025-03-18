@@ -495,18 +495,44 @@ export default function LoanManagementApp() {
           />
           <Label>{t('amortMethodLabel')}</Label>
           <UiSelect>
-            <SelectTrigger 
-              className="mb-2" 
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '2rem', position: 'relative' }}
-              onClick={() => document.getElementById('amortMethodDropdown').style.display = document.getElementById('amortMethodDropdown').style.display === 'none' ? 'block' : 'none'}>
-              <SelectValue style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{amortizationMethod}</SelectValue>
-              <span style={{ position: 'absolute', right: '0.75rem' }}>▼</span>
-            </SelectTrigger>
-            <SelectContent id="amortMethodDropdown" style={{display: 'none', marginTop: '0.25rem'}}>
-              <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>{t('spitzerMethod')}</SelectItem>
-              <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>{t('equalPrincipalMethod')}</SelectItem>
-              <SelectItem onClick={() => {setAmortizationMethod('Balloon'); document.getElementById('amortMethodDropdown').style.display = 'none'}}>{t('balloonMethod')}</SelectItem>
-            </SelectContent>
+            {(() => {
+              const [isOpen, setIsOpen] = useState(false);
+              return (
+                <>
+                  <SelectTrigger 
+                    className="mb-2" 
+                    style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center', 
+                      padding: '0.5rem',
+                      position: 'relative',
+                      paddingInlineEnd: '2rem',
+                      paddingInlineStart: '0.75rem'
+                    }}
+                    onClick={() => setIsOpen(!isOpen)}>
+                    <SelectValue style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>{amortizationMethod}</SelectValue>
+                    <span style={{ 
+                      position: 'absolute',
+                      [direction === 'rtl' ? 'left' : 'right']: '0.75rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)'
+                    }}>▼</span>
+                  </SelectTrigger>
+                  <SelectContent style={{
+                    display: isOpen ? 'block' : 'none',
+                    marginTop: '0.25rem',
+                    position: 'absolute',
+                    width: '100%',
+                    zIndex: 10
+                  }}>
+                    <SelectItem onClick={() => {setAmortizationMethod('Spitzer'); setIsOpen(false)}}>{t('spitzerMethod')}</SelectItem>
+                    <SelectItem onClick={() => {setAmortizationMethod('EqualPrincipal'); setIsOpen(false)}}>{t('equalPrincipalMethod')}</SelectItem>
+                    <SelectItem onClick={() => {setAmortizationMethod('Balloon'); setIsOpen(false)}}>{t('balloonMethod')}</SelectItem>
+                  </SelectContent>
+                </>
+              );
+            })()}
           </UiSelect>
           <Button className="w-full" onClick={handleSubmit}>
             {editingLoanId ? t('saveLoan') : t('addLoan')}
