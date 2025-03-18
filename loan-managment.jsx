@@ -418,24 +418,25 @@ export default function LoanManagementApp() {
   return (
     <motion.div
       className="min-h-screen p-6 bg-gray-50"
-      style={{ direction }}
+      style={{ direction, textAlign: direction === 'rtl' ? 'right' : 'left' }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="mb-4">
-        <Label htmlFor="languageSelect" className="mr-2">
+      <div className="mb-4 flex items-center justify-end">
+        <Label htmlFor="languageSelect" className={`${direction === 'rtl' ? 'ml-2' : 'mr-2'}`}>
           {t('languageLabel')}:
         </Label>
         <select
           id="languageSelect"
-          className="border rounded p-1"
+          className="border rounded p-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={lang}
           onChange={(e) => setLang(e.target.value)}
+          style={{ direction: 'ltr' }}
         >
           <option value="en">English</option>
-          <option value="he">עברית</option>
-          <option value="ar">العربية</option>
+          <option value="he" style={{ direction: 'rtl' }}>עברית</option>
+          <option value="ar" style={{ direction: 'rtl' }}>العربية</option>
         </select>
       </div>
       <h1 className="text-2xl mb-4 font-bold">{t('appTitle')}</h1>
