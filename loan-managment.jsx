@@ -617,6 +617,48 @@ export default function LoanManagementApp() {
                     </div>
                     {expandedLoanIds.includes(loan.id) && (
                       <div className="overflow-auto mt-4">
+                        <div className="mb-2 flex gap-2">
+                          <Button onClick={() => {
+                            const headers = ['Month', 'Due Date', 'Interest', 'Principal', 'Total', 'Balance'];
+                            const csvContent = [
+                              headers.join(','),
+                              ...schedule.map(entry => [
+                                entry.month,
+                                entry.paymentDate ? formatDate(entry.paymentDate) : '-',
+                                entry.interest.toFixed(2),
+                                entry.principal.toFixed(2),
+                                (entry.interest + entry.principal).toFixed(2),
+                                entry.balance.toFixed(2)
+                              ].join(','))
+                            ].join('\n');
+                            
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = `${loan.name}_schedule.csv`;
+                            link.click();
+                          }}>
+                            Export CSV
+                          </Button>
+                          <Button onClick={() => {
+                            const XLSX = require('xlsx');
+                            const data = schedule.map(entry => ({
+                              Month: entry.month,
+                              'Due Date': entry.paymentDate ? formatDate(entry.paymentDate) : '-',
+                              Interest: entry.interest.toFixed(2),
+                              Principal: entry.principal.toFixed(2),
+                              Total: (entry.interest + entry.principal).toFixed(2),
+                              Balance: entry.balance.toFixed(2)
+                            }));
+                            
+                            const ws = XLSX.utils.json_to_sheet(data);
+                            const wb = XLSX.utils.book_new();
+                            XLSX.utils.book_append_sheet(wb, ws, 'Schedule');
+                            XLSX.writeFile(wb, `${loan.name}_schedule.xlsx`);
+                          }}>
+                            Export Excel
+                          </Button>
+                        </div>
                         <table className="w-full text-sm border border-gray-200">
                           <thead className="bg-gray-100">
                             <tr>
